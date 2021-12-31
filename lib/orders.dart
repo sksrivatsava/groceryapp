@@ -19,7 +19,8 @@ class ord{
   String date;
 
   ord(DataSnapshot snap){
-    List l=snap.value['items'].split(',');
+    dynamic x=snap.value;
+    List l=x['items'].split(',');
     List<pro> p=[];
 
     for(var i=0;i<l.length;i++){
@@ -29,9 +30,9 @@ class ord{
 
     }
     this.itemlist=p;
-    this.total=snap.value['total'];
-    this.address=snap.value['address'];
-    this.date=snap.value['date'];
+    this.total=x['total'];
+    this.address=x['address'];
+    this.date=x['date'];
 
 
 

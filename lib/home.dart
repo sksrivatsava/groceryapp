@@ -7,6 +7,7 @@ import 'package:grocery/model1.dart';
 import 'package:grocery/models.dart';
 import 'package:grocery/orders.dart';
 import 'package:grocery/services.dart';
+import 'package:grocery/text_ml.dart';
 class home extends StatefulWidget {
   @override
   _homeState createState() => _homeState();
@@ -18,25 +19,27 @@ class _homeState extends State<home> {
   final _prod=FirebaseDatabase.instance.reference().child('products');
   final _cart=FirebaseDatabase.instance.reference().child('cart');
   var user="";
-  final catdict={
-    'All':prolist,
-    'Oil':oil,
-    'Atta and other flours':attaandotherflours,
-    'Rice and other Grains':riceandothergrains,
-    'Pulses':pulses,
-    'Salt,suggar and jaggery':saltsugarandjaggery,
-    'Spices':spices,
-    'Householditems':householditems,
-    'Beverages':beverages,
-    'Healthdrinks':healthdrinks,
-    'Milk products':milkproducts,
-    'Snacks':snacks,
+  var catdict={
+    'All':List.from(prolist),
+    'Oil':List.from(oil),
+    'Atta and other flours':List.from(attaandotherflours),
+    'Rice and other Grains':List.from(riceandothergrains),
+    'Pulses':List.from(pulses),
+    'Salt,suggar and jaggery':List.from(saltsugarandjaggery),
+    'Spices':List.from(spices),
+    'Householditems':List.from(householditems),
+    'Beverages':List.from(beverages),
+    'Healthdrinks':List.from(healthdrinks),
+    'Milk products':List.from(milkproducts),
+    'Snacks':List.from(snacks),
 
   };
+
   var listop="All";
   var dictops;
   List<product1> l=[];
   List<product1> pl=[];
+  List<product1> pl2=[];
   var d={};
   var st=false;
   var si=false;
@@ -68,7 +71,8 @@ class _homeState extends State<home> {
     d={};
     _cart.child(getUser(_auth.currentUser.email)).onChildAdded.listen((event) {
       setState(() {
-        d[event.snapshot.key]=event.snapshot.value['qty'];
+        dynamic x=event.snapshot.value;
+        d[event.snapshot.key]=x['qty'];
       });
 
     });
@@ -80,30 +84,46 @@ class _homeState extends State<home> {
     super.initState();
 
     setState(() {
-      l=List.from(prolist);
-      pl=List.from(prolist);
+      l=List.from(catdict['All']);
+      pl=List.from(catdict['All']);
       dictops=catdict.keys;
     });
 
     _cart.child(getUser(_auth.currentUser.email)).onChildAdded.listen((event) {
       setState(() {
-        d[event.snapshot.key]=event.snapshot.value['qty'];
+        dynamic x=event.snapshot.value;
+        d[event.snapshot.key]=x['qty'];
       });
 
     });
 
     _dref.child(getUser(_auth.currentUser.email)).onValue.listen((event) {
       setState(() {
-        user=event.snapshot.value['Username'];
+        dynamic x=event.snapshot.value;
+        user=x['Username'];
       });
     });
 
-    // _prod.onChildAdded.listen((event) {
-    //
-    //   setState(() {
-    //     l.add(new product.fromSnapShot(event.snapshot));
-    //   });
-    // });
+    _prod.onChildAdded.listen((event) {
+
+
+      setState(() {
+        dynamic x=event.snapshot.value;
+        if(catdict.containsKey(x['cat']) && !catdict[x['cat']].contains(product1(x['productname'],x['img'],x['cat'],x['rate']))){
+          print('again');
+          catdict[x['cat']].add(product1(x['productname'],x['img'],x['cat'],x['rate']));
+        }
+        else{
+
+          catdict[x['cat']]=List.from([product1(x['productname'],x['img'],x['cat'],x['rate'])]);
+        }
+        if(!catdict['All'].contains(product1(x['productname'],x['img'],x['cat'],x['rate']))){
+        catdict['All'].add(product1(x['productname'],x['img'],x['cat'],x['rate']));}
+        l=List.from(catdict['All']);
+        pl=List.from(catdict['All']);
+        pl2=List.from(catdict['All']);
+      });
+    });
     // putdata();
   }
   @override
@@ -120,7 +140,7 @@ class _homeState extends State<home> {
               height: 50,
             ),
             Container(
-                padding: const EdgeInsets.all(8.0), child: Text('GroceryApp',style: TextStyle(fontWeight: FontWeight.bold),))
+                padding: const EdgeInsets.all(8.0), child: Text('Intellimart',style: TextStyle(fontWeight: FontWeight.bold),))
           ],
 
         ),
@@ -157,24 +177,27 @@ class _homeState extends State<home> {
             SizedBox(
               width: 100,
             ),
-            Container(
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Container(
 
 
 
-              height: 250,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/grocery.jpg'),
-                  fit: BoxFit.fitWidth,
-                  alignment: Alignment.topCenter,
+                height: 250,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/grocery.jpg'),
+                    fit: BoxFit.fitWidth,
+                    alignment: Alignment.topCenter,
 
-                  colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
+                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
 
-                )
-              ),
-              // color: Colors.blue,
-              child: Center(
-                child: Text('Welcome ${user}',style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold,fontSize: 35.0),),
+                  )
+                ),
+                // color: Colors.blue,
+                child: Center(
+                  child: Text('Welcome ${user}',style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold,fontSize: 35.0),),
+                ),
               ),
             ),
             ListTile(
@@ -205,6 +228,22 @@ class _homeState extends State<home> {
                   // TODO
                 }
               },
+            ),
+            ListTile(
+            title: Row(
+              children: [
+                Icon(FontAwesomeIcons.camera),
+                SizedBox(width: 20.0,),
+                Text('Order using camera'),
+              ],
+            ),
+
+              onTap: () async{
+                    dynamic r=await Navigator.push(context, MaterialPageRoute(builder: (context)=>text_ml(pl2, d)));
+                    if(r=='b'){
+                      pr();
+                    }
+              },
             )
           ],
         ),
@@ -218,7 +257,7 @@ class _homeState extends State<home> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text('SHop by category: ',
+                    child: Text('Shop by category: ',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -245,7 +284,7 @@ class _homeState extends State<home> {
                       });
 
                     },
-                    items: dictops
+                    items: catdict.keys
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -350,7 +389,7 @@ class _homeState extends State<home> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Image.network(l[index].img,width: 100,height: 100,),
+                                l[index].img!="None"?Image.network(l[index].img,width: 100,height: 100,):SizedBox(),
                                 Flexible(
                                   child: Text(l[index].name,
                                   style: TextStyle(

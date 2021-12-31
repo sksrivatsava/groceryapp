@@ -2,22 +2,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:grocery/addressform.dart';
+import 'package:grocery/review.dart';
 import 'package:grocery/services.dart';
 
 
 class carto{
   String key;
+
   String name;
   int qty;
   String img;
   int rate;
 
-  carto.fromSnapShot(DataSnapshot snap):
-      key=snap.key,
-      name=snap.value['pname'],
-      qty=snap.value['qty'],
-      img=snap.value['image'],
-      rate=snap.value['rate'];
+  carto(DataSnapshot snap) {
+    this.key = snap.key;
+    dynamic x=snap.value;
+    this.name=x['pname'];
+    this.qty=x['qty'];
+    this.img=x['image'];
+    this.rate=x['rate'];
+  }
 
 }
 class cart extends StatefulWidget {
@@ -40,22 +44,23 @@ class _cartState extends State<cart> {
   var total=0;
   var content=[];
   var items="";
-  
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _cart.child(getUser(_auth.currentUser.email)).onChildAdded.listen((event) {
       setState(() {
-        cl.add(new carto.fromSnapShot(event.snapshot));
-        total=total+event.snapshot.value['rate'];
-        String c=event.snapshot.value['pname']+'@'+event.snapshot.value['qty'].toString()+'@'+event.snapshot.value['rate'].toString();
+        cl.add(new carto(event.snapshot));
+        dynamic x=event.snapshot.value;
+        total=total+x['rate'];
+        String c=x['pname']+'@'+x['qty'].toString()+'@'+x['rate'].toString();
         content.add(c);
 
       });
 
     });
-    
+
   }
   @override
   Widget build(BuildContext context) {
@@ -82,11 +87,11 @@ class _cartState extends State<cart> {
         child: Column(
           children: [
             Flexible(
-                
+
                 child:ListView.builder(
                     itemCount: cl.length,
                     itemBuilder: (context,index){
-                      
+
                       return Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Card(
@@ -100,7 +105,7 @@ class _cartState extends State<cart> {
 
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Image.network(cl[index].img,width: 50*1.5,height: 50*1.5,),
+                                cl[index].img!='None'?Image.network(cl[index].img,width: 50*1.5,height: 50*1.5,):SizedBox(),
                                 Flexible(child: Text(cl[index].name,style: TextStyle(fontWeight: FontWeight.bold,),)),
                                 SizedBox(width: 10.0,),
                                 Text('qty: ${cl[index].qty.toString()}',style: TextStyle(fontWeight: FontWeight.bold,),),
@@ -112,8 +117,8 @@ class _cartState extends State<cart> {
                           ),
                         ),
                       );
-                  
-                  
+
+
                 }) ),
             Padding(
               padding: const EdgeInsets.only(bottom: 15.0,right: 15.0),
@@ -133,6 +138,7 @@ class _cartState extends State<cart> {
                   dynamic result = await Navigator.push(context, MaterialPageRoute(builder: (context)=>address(items,total)));
 
                   if(result=="back"){
+
                     Navigator.pop(context,"back1");
                   }
             },

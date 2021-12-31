@@ -9,7 +9,7 @@ List<product1> oil=[
   ),
 
   new product1(
-      'Soffola Gold edible oil 1L',
+      'Saffola Gold edible oil 1L',
       'https://images-na.ssl-images-amazon.com/images/I/71PA6oc4PXL._SL1500_.jpg',
       'oil',
       184
@@ -84,13 +84,13 @@ List<product1> pulses=[
   ),
   new product1(
       'Basic Moong Dal 1kg',
-      'https://kayamegamart.com/wp-content/uploads/2021/03/unnamed.jpg',
+      'https://www.bigbasket.com/media/uploads/p/l/30005420_11-bb-popular-moong-dal.jpg',
       'Pulses',
       106
   ),
   new product1(
       'Tata sampann chana dal 1kg',
-      'https://padelasuperstore.in/wp-content/uploads/2020/06/612epGejKUL._SL1000_.jpg',
+      'https://m.media-amazon.com/images/I/71nx6ZI0PmL._SX522_.jpg',
       'Pulses',
       75
   ),
@@ -205,7 +205,7 @@ List<product1> householditems=[
 
 List<product1> beverages=[
   new product1(
-      'Sprite cold drinks 2.25l',
+      'Sprite cold drinks 2l',
       'https://images-na.ssl-images-amazon.com/images/I/61sDLPTkyPL._SX425_.jpg',
       'beverages',
       80

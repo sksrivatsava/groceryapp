@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:grocery/review.dart';
 import 'package:grocery/services.dart';
 
 class address extends StatefulWidget {
@@ -135,25 +136,20 @@ class _addressState extends State<address> {
                           'submit',
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: ()  {
+                        onPressed: ()  async{
                           if (_formKey.currentState.validate()) {
-                              var address=line1+','+line2+','+city+','+state+','+country;
+                              var address1=line1+','+line2+','+city+','+state+','+country;
                               var now=DateTime.now();
                               var date=now.day.toString()+'/'+now.month.toString()+'/'+now.year.toString();
-                              _cart.child(getUser(_auth.currentUser.email)).remove();
-                            _ord.child(getUser(_auth.currentUser.email)).push().set(
-                              {
-                                'items':widget.items,
-                                'total':widget.total,
-                                'address':address,
-                                'date':date
 
+                              dynamic r=await Navigator.push(context, MaterialPageRoute(builder: (context)=>review(widget.items,widget.total,address1,date)));
+                              if(r=='b'){
+                                Navigator.pop(context,'back');
                               }
-                            );
 
                           }
                            // _showDialog();
-                          Navigator.pop(context,"back");
+
                         }
                     ),
                     SizedBox(height: 12.0),

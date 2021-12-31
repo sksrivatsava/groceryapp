@@ -2,7 +2,7 @@
     package="com.example.grocery">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="grocery"
+        android:label="Intellimart"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

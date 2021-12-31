@@ -36,7 +36,7 @@ class _authenticationState extends State<authentication> {
               height: 50,
             ),
             Container(
-                padding: const EdgeInsets.all(8.0), child: Text('GroceryApp',style: TextStyle(fontWeight: FontWeight.bold),))
+                padding: const EdgeInsets.all(8.0), child: Text('Intellimart',style: TextStyle(fontWeight: FontWeight.bold),))
           ],
 
         ),
@@ -246,7 +246,6 @@ class _authenticationState extends State<authentication> {
                           });
                           try {
                             dynamic result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-
                             // if(result == null) {
                             //   setState(() {
                             //     error = 'Could not sign in with those credentials';
